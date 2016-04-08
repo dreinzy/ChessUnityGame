@@ -1,0 +1,23 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GameController.cs">
+    <Files>
+      <File FileName="Assets\Scripts\GameController.cs" Line="148" Column="78" />
+      <File FileName="Assets\Scripts\ZoneScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PopulateBoard.cs" Line="165" Column="1" />
+      <File FileName="Assets\Scripts\PawnBehaviourScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ChessBoard.cs" Line="18" Column="30" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="C:\Users\dreinzy\OneDrive\ChessUnityProject\Assets\Scripts\PawnBehaviourScript.cs" line="26" column="1" />
+      <Breakpoint file="C:\Users\dreinzy\OneDrive\ChessUnityProject\Assets\Scripts\ChessBoard.cs" line="14" column="16" />
+      <Breakpoint file="C:\Users\dreinzy\OneDrive\ChessUnityProject\Assets\Scripts\PawnBehaviourScript.cs" line="67" column="1" />
+      <Breakpoint file="C:\Users\dreinzy\OneDrive\ChessUnityProject\Assets\Scripts\PawnBehaviourScript.cs" line="97" column="1" />
+      <Breakpoint file="C:\Users\dreinzy\OneDrive\ChessUnityProject\Assets\Scripts\PopulateBoard.cs" line="187" column="18" />
+      <Breakpoint file="C:\Users\dreinzy\OneDrive\ChessUnityProject\Assets\Scripts\GameController.cs" line="93" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 15f075341431c7d4896dd8d7d5dc6a68
+timeCreated: 1440252299
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - pawn: {fileID: 100002, guid: a983f39e23d951f45affc28b89ffe441, type: 3}
+  - rook: {fileID: 100010, guid: 857ea5287429c6640805096ecc43afac, type: 3}
+  - bishop: {fileID: 100000, guid: 3c49f52260240e6438cfc7e73e924537, type: 3}
+  - knight: {fileID: 100010, guid: 9db56cec05a0a9f4d925db50127971a4, type: 3}
+  - queen: {fileID: 100012, guid: d25f39f051a0b994ab6c41751e9fe58e, type: 3}
+  - king: {fileID: 100006, guid: 4e480ccf1f8398e43bf963288dfb7310, type: 3}
+  - pawnB1: {instanceID: 0}
+  - ZoneB1: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
