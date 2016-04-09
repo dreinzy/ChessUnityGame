@@ -23,6 +23,8 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 
 	public bool CheckMove(ZoneScript target)
 	{
+		int distanceCol = Mathf.Abs((int)currentCol - (int)target.column);
+		int distanceRow = Mathf.Abs(currentRow - target.row);
 		switch (this.gameObject.tag) {
 		case "Pawn":
 			/*** Pawn taking another piece ***/
@@ -93,55 +95,153 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 		case "Rook":
 			/*** Rook movement ***/
 			// Rook isn't trying to take a piece of the same colour
-			if (target.occupado) 
-				if (target.containedPiece.colour == colour)
-					return false;
+			if (target.occupado && target.containedPiece.colour == colour) 
+				return false;
 			// Target is in same row
 			if (target.row == currentRow) 
 			{
-				for (int i = 0; i < Mathf.Abs(target.row - currentRow); i++) {
-					if(IsOccupied(currentCol, currentRow + i))
+					// Check places between piece and target are vacant
+					int distance = Mathf.Abs((int)target.column - (int)currentCol);
+					for (int i = 1; i < distance; i++) {
+						if(IsOccupied((char)(currentCol + (char)i), currentRow))
 						return false;
+					}
 					return true;
-				}
 			}
 			// Target is in same column
 			else if (target.column.Equals(currentCol)) 
 			{
-				for (int i = 0; i < Mathf.Abs((int)target.column - (int)currentCol); i++) {
-					if(IsOccupied((char)((char)currentCol + (char)i), currentRow))
+					// Check places between piece and target are vacant
+					int distance = Mathf.Abs(target.row - currentRow);
+					for (int i = 1; i < distance; i++) {
+						if(IsOccupied(currentCol, currentRow + i))
 						return false;
+					}
 					return true;
-				}
 			}
 			break;
 		case "Bishop":
 			/*** Bishop movement ***/
 			// Bishop isn't trying to take a piece of the same colour
-			if (target.occupado) 
-				if (target.containedPiece.colour == colour)
-					return false;
+			if (target.occupado && target.containedPiece.colour == colour) 
+				return false;
+			// Target is diagonal to bishop
+			if (distanceCol == distanceRow)
+			{
+				// Determine direction of target
+				if ((int)currentCol < target.column && currentRow < target.row)
+				{ // up-left
+					for (int i = 1; i < distanceCol; i++)
+					{
+						if(IsOccupied((char)(currentCol + (char)i), currentRow + i))
+						return false;
+					}
+					return true;
+				}
+				else if((int)currentCol > target.column && currentRow < target.row)
+				{ // up-right
+					for (int i = 1; i < distanceCol; i++)
+					{
+						if(IsOccupied((char)(currentCol - (char)i), currentRow + i))
+						return false;
+					}
+					return true;
+				}
+				else if((int)currentCol < target.column && currentRow > target.row)
+				{ // down-left
+					for (int i = 1; i < distanceCol; i++)
+					{
+						if(IsOccupied((char)(currentCol + (char)i), currentRow - i))
+						return false;
+					}
+					return true;
+				}
+				else
+				{ // down-right
+					for (int i = 1; i < distanceCol; i++)
+					{
+						if(IsOccupied((char)(currentCol - (char)i), currentRow - i))
+						return false;
+					}
+					return true;
+				}
+			}			
 			break;
 		case "Knight":
 			/*** Knight movement ***/
 			// Knight isn't trying to take a piece of the same colour
-			if (target.occupado) 
-				if (target.containedPiece.colour == colour)
-					return false;
+			if (target.occupado && target.containedPiece.colour == colour) 
+				return false;
+				int vertDistance = Mathf.Abs((int)currentCol - (int)target.column);
+				int horDistance = Mathf.Abs(currentRow - target.row);
+				if ((vertDistance == 1 && horDistance == 2) || (vertDistance == 2 && horDistance == 1))
+					return true;
 			break;
 		case "Queen":
 			/*** Queen movement ***/
 			// Queen isn't trying to take a piece of the same colour
-			if (target.occupado) 
-				if (target.containedPiece.colour == colour)
-					return false;
+			if (target.occupado && target.containedPiece.colour == colour) 
+				return false;
+			// Target is in same row
+			if (target.row == currentRow) 
+			{
+				// Check places between piece and target are vacant
+				int distance = Mathf.Abs((int)target.column - (int)currentCol);
+				for (int i = 1; i < distance; i++) {
+					if(IsOccupied((char)(currentCol + (char)i), currentRow))
+						return false;
+				}
+				return true;
+			}
+			 // Target is diagonal to bishop
+			else if (distanceCol == distanceRow)
+			{
+				// Determine direction of target
+				if ((int)currentCol < target.column && currentRow < target.row)
+				{ // up-left
+					for (int i = 1; i < distanceCol; i++)
+					{
+						if(IsOccupied((char)(currentCol + (char)i), currentRow + i))
+							return false;
+					}
+					return true;
+				}
+				else if((int)currentCol > target.column && currentRow < target.row)
+				{ // up-right
+					for (int i = 1; i < distanceCol; i++)
+					{
+						if(IsOccupied((char)(currentCol - (char)i), currentRow + i))
+							return false;
+					}
+					return true;
+				}
+				else if((int)currentCol < target.column && currentRow > target.row)
+				{ // down-left
+					for (int i = 1; i < distanceCol; i++)
+					{
+						if(IsOccupied((char)(currentCol + (char)i), currentRow - i))
+							return false;
+					}
+					return true;
+				}
+				else
+				{ // down-right
+					for (int i = 1; i < distanceCol; i++)
+					{
+						if(IsOccupied((char)(currentCol - (char)i), currentRow - i))
+							return false;
+					}
+					return true;
+				}
+			}			
 			break;
 		case "King":
 			/*** King movement ***/
 			// King isn't trying to take a piece of the same colour
-			if (target.occupado) 
-				if (target.containedPiece.colour == colour)
-					return false;
+			if (target.occupado && target.containedPiece.colour == colour) 
+				return false;
+			if (distanceCol == 1 && distanceRow == 1)
+				return true;
 			break;
 		default:
 			break;
@@ -166,8 +266,15 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 
 	public void Move (char col, int row)
 	{
-	Destroy (this.gameObject);
-		//GameController.FindContainingZone (this.gameObject);
+		GameController.FindContainingZone (this.gameObject).occupado = false;
+		ZoneScript TargetZone = GameController.SelectZone(col, row);
+		if (TargetZone.occupado)
+		{
+			PawnBehaviourScript targetPiece = GameController.SelectPiece(col, row);
+			Destroy(targetPiece.gameObject);
+		}
+		this.transform.position = TargetZone.gameObject.transform.position;
+		//Destroy (this.gameObject);
 	}
 
 	#region IPointerClickHandler implementation

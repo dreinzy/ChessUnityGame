@@ -42,6 +42,7 @@ public class PopulateBoard : MonoBehaviour {
 				Pawn.AddComponent<PawnBehaviourScript>();
 				Pawn.AddComponent<Rigidbody>();
 				Pawn.AddComponent<BoxCollider>();
+				//Pawn.AddComponent<
 				pawnCount++;
 			}
 			else if (boxCollider.name == "A7" || boxCollider.name == "B7" || boxCollider.name == "C7" || boxCollider.name == "D7" || boxCollider.name == "E7" || boxCollider.name == "F7" || boxCollider.name == "G7" || boxCollider.name == "H7")
