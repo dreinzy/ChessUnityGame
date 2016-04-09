@@ -9,8 +9,8 @@ public class GameController : MonoBehaviour
 
 	public GameObject camera1;
 	public GameObject camera2;
-	private bool validMove = false;
-	private bool particlesAnimating = false;
+//	private bool validMove = false;
+//	private bool particlesAnimating = false;
 	private bool firstTime = true;
 	private bool player1Turn = true;
 	private bool pieceSelect = true;
@@ -19,8 +19,8 @@ public class GameController : MonoBehaviour
 	PawnBehaviourScript initialPiece = null;
 
 	public GameObject SelectedPiece;
-	public GameObject[] TargetZones;
-	public GameObject TargetZone;
+//	public GameObject[] TargetZones;
+	public ZoneScript TargetZone;
 
 	void Start ()
 	{
@@ -83,19 +83,37 @@ public class GameController : MonoBehaviour
 
 			try
 			{
-				// White player choosing piece
 				if (pieceSelect)
 				{
 					FindNextPiece(ref piece);
 				}
 				else if (zoneSelect)
 				{
-//					ZoneScript zone = FindContainingZone(SelectedPiece.gameObject);
-//					FindNextZone(ref zone);
 					if (TargetZone == null)
-						TargetZone = SelectZone(piece.currentCol, piece.currentRow).gameObject;
-					ZoneScript zs = TargetZone.GetComponent<ZoneScript>();
-					FindNextZone(ref zs);
+						TargetZone = SelectZone(piece.currentCol, piece.currentRow);
+					
+//					FindNextZone(ref zone);
+					FindNextZone(ref TargetZone);
+					if(!pieceSelect && !zoneSelect)
+					{	
+						if(piece.CheckMove(TargetZone))
+						{
+							piece.Move(TargetZone.column, TargetZone.row);
+							piece= null;
+							TargetZone = null;
+							pieceSelect = true;
+							if (player1Turn)
+								Player(2);
+							else
+								Player(1);
+						}
+						else 
+						{
+							Debug.Log("Not a valid move");
+							TargetZone = SelectZone(piece.currentCol, piece.currentRow);
+							zoneSelect = true;
+						}
+					}
 					//TargetZone.GetComponent<Light>().enabled = true;
 //
 //					if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
@@ -145,12 +163,12 @@ public class GameController : MonoBehaviour
 		}
 
 		// A piece has been selected
-		if (SelectedPiece != null && TargetZone == null && (!particlesAnimating || CheckIfSelectedPieceHasChanged (SelectedPiece.GetComponent<PawnBehaviourScript> ()))) 
-		{
-//			ParticleSystem pS = FindContainingZone(SelectedPiece).gameObject.GetComponent<ParticleSystem> ();
-//			pS.Play ();
-			particlesAnimating = true;
-		}
+//		if (SelectedPiece != null && TargetZone == null && (!particlesAnimating || CheckIfSelectedPieceHasChanged (SelectedPiece.GetComponent<PawnBehaviourScript> ()))) 
+//		{
+////			ParticleSystem pS = FindContainingZone(SelectedPiece).gameObject.GetComponent<ParticleSystem> ();
+////			pS.Play ();
+//			particlesAnimating = true;
+//		}
 	}
 
 	public PawnBehaviourScript FindNextPiece(ref PawnBehaviourScript piece)
@@ -192,17 +210,27 @@ public class GameController : MonoBehaviour
 		if (Input.GetButtonDown("Select")) {
 			pieceSelect = false;
 			zoneSelect = true;
+			TargetZone = SelectZone(piece.currentCol, piece.currentRow);
 		}
 
 		return SelectedPiece.GetComponent<PawnBehaviourScript>();
 	}
 
-	public ZoneScript FindNextZone(ref ZoneScript zs)
+	public ZoneScript FindNextZone(ref ZoneScript TargetZone)
 	{
 		if (player1Turn) 
 		{				
 			if (Input.GetButtonDown("Up")) {
-				TargetZone = SelectZone(zs.column, zs.row + 1).gameObject;
+				TargetZone = SelectZone(TargetZone.column, TargetZone.row + 1);
+			}
+			else if (Input.GetButtonDown("Down")) {
+			TargetZone = SelectZone(TargetZone.column, TargetZone.row - 1);
+			}
+			else if (Input.GetButtonDown("Left")) {
+			TargetZone = SelectZone((char)(TargetZone.column + (char)1), TargetZone.row);
+			}
+			else if (Input.GetButtonDown("Right")) {
+			TargetZone = SelectZone((char)(TargetZone.column - (char)1), TargetZone.row);
 			}
 //			else if (Input.GetButtonDown("Down")) {
 //				SelectedPiece = SelectPiece(piece.currentCol, piece.currentRow - 1).gameObject;
@@ -215,8 +243,20 @@ public class GameController : MonoBehaviour
 //				SelectedPiece = SelectPiece((char)(piece.currentCol - (char)1), piece.currentRow).gameObject;			
 //			}
 		}
-		else 
+		else
 		{
+			if (Input.GetButtonDown("Up")) {
+			TargetZone = SelectZone(TargetZone.column, TargetZone.row - 1);
+			}
+			else if (Input.GetButtonDown("Down")) {
+			TargetZone = SelectZone(TargetZone.column, TargetZone.row + 1);
+			}
+			else if (Input.GetButtonDown("Left")) {
+			TargetZone = SelectZone((char)(TargetZone.column - (char)1), TargetZone.row);
+			}
+			else if (Input.GetButtonDown("Right")) {
+			TargetZone = SelectZone((char)(TargetZone.column + (char)1), TargetZone.row);
+			}
 //			if (Input.GetButtonDown("Up")) {
 //				SelectedPiece = SelectPiece(piece.currentCol, piece.currentRow - 1).gameObject;
 //			}
@@ -234,7 +274,12 @@ public class GameController : MonoBehaviour
 //			}
 		}
 		if (Input.GetButtonDown("Select")) {
+			zoneSelect = false;
+		}
+		else if (Input.GetButtonDown("Cancel"))
+		{
 			pieceSelect = true;
+			TargetZone = null;
 			zoneSelect = false;
 		}
 
@@ -267,92 +312,88 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-	public void MovePiece(GameObject piece, GameObject newLocation)
-	{
-		ZoneScript zone = newLocation.GetComponent<ZoneScript>();
-//		BoxCollider bc = newLocation.GetComponent<BoxCollider>();
-		PawnBehaviourScript pieceScript = piece.GetComponent<PawnBehaviourScript> ();
-		bool pawnFirstMove = pieceScript.firstMove;
-		char pieceCol = pieceScript.currentCol;
-		int pieceRow = pieceScript.currentRow;
-		char zoneCol = newLocation.GetComponent<ZoneScript>().column;
-		int zoneRow = newLocation.GetComponent<ZoneScript>().row;
-
-		pieceScript.Move (zoneCol, zoneRow);
-
-		switch (piece.tag)
-		{
-		case "Pawn":
-			if((zoneCol == (pieceCol+1) || zoneCol == (pieceCol-1))&&zoneRow == pieceRow)
-			{
-				validMove = true;
-			}
-			else if ((zoneCol == (pieceCol+2) || zoneCol == (pieceCol-2))&&zoneRow == pieceRow && pawnFirstMove)
-			{
-				validMove = true;
-				piece.GetComponent<PawnBehaviourScript>().firstMove = false;
-			}
-			break;
-		case "Rook":
-			if(zoneCol == pieceCol || zoneRow == pieceRow)
-				validMove = true;
-			break;
-		case "Bishop":
-			for (int i = 1; i < 8; i++) 
-			{
-				if(zoneCol == pieceCol + i && zoneRow == pieceRow + i || zoneCol == pieceCol + i && zoneRow == pieceRow - i ||
-				   zoneCol == pieceCol - i && zoneRow == pieceRow + i || zoneCol == pieceCol - i && zoneRow == pieceRow - i)
-				{
-					validMove = true;
-					break;
-				}
-			}
-			break;
-		case "Knight":
-			if(zoneCol == pieceCol + 1 && zoneRow == pieceRow + 2 || zoneCol == pieceCol + 1 && zoneRow == pieceRow - 2 ||
-			   zoneCol == pieceCol - 1 && zoneRow == pieceRow + 2 || zoneCol == pieceCol - 1 && zoneRow == pieceRow - 2 ||
-			   zoneCol == pieceCol + 2 && zoneRow == pieceRow + 1 || zoneCol == pieceCol + 2 && zoneRow == pieceRow - 1 ||
-			   zoneCol == pieceCol - 2 && zoneRow == pieceRow + 1 || zoneCol == pieceCol - 2 && zoneRow == pieceRow - 1)
-				validMove = true;
-			break;
-		case "Queen":
-			if(zoneCol == pieceCol || zoneRow == pieceRow)
-				validMove = true;
-			for (int i = 1; i < 8; i++) 
-			{
-				if( zoneCol == pieceCol + i && zoneRow == pieceRow + i || zoneCol == pieceCol + i && zoneRow == pieceRow - i ||
-			   zoneCol == pieceCol - i && zoneRow == pieceRow + i || zoneCol == pieceCol - i && zoneRow == pieceRow - i)
-					validMove = true;
-			}
-			break;
-		case "King":
-			if(zoneCol == pieceCol && zoneRow == pieceRow + 1 || zoneCol == pieceCol -1 ||
-			   zoneCol == pieceCol + 1 && zoneRow == pieceRow || zoneCol == pieceCol + 1 && zoneRow == pieceRow + 1 || zoneCol == pieceCol + 1 && zoneRow == pieceRow - 1 ||
-			   zoneCol == pieceCol - 1 && zoneRow == pieceRow || zoneCol == pieceCol - 1 && zoneRow == pieceRow + 1 || zoneCol == pieceCol - 1 && zoneRow == pieceRow - 1)
-				validMove = true;
-			break;
-		default:
-			break;
-		}
-		if(validMove)
-		{
-			if(zone.occupado)
-			{
-				char col = zone.column;
-				int row = zone.row;
-				
-				PawnBehaviourScript[] piecesContainingDestructor = FindObjectsOfType<PawnBehaviourScript>();
-				foreach (PawnBehaviourScript p in piecesContainingDestructor) 
-				{
-					if (p.currentCol == col && p.currentRow == row)
-						Destroy(p.gameObject);
-				}
-			}
-			Destroy (piece);
-//			piece = (GameObject)Instantiate (piece, bc.bounds.center - offset, Quaternion.identity);
-			zone.occupado = false;
-		}
-	}
+//	public void MovePiece(GameObject piece, GameObject newLocation)
+//	{
+//		ZoneScript zone = newLocation.GetComponent<ZoneScript>();
+////		BoxCollider bc = newLocation.GetComponent<BoxCollider>();
+////		PawnBehaviourScript pieceScript = piece.GetComponent<PawnBehaviourScript> ();
+////		bool pawnFirstMove = pieceScript.firstMove;
+////		char pieceCol = pieceScript.currentCol;
+////		int pieceRow = pieceScript.currentRow;
+////		char zoneCol = newLocation.GetComponent<ZoneScript>().column;
+////		int zoneRow = newLocation.GetComponent<ZoneScript>().row;
+//
+////		pieceScript.Move (zoneCol, zoneRow);
+////		switch (piece.tag)
+////		{
+////		case "Pawn":
+////			if((zoneCol == (pieceCol+1) || zoneCol == (pieceCol-1))&&zoneRow == pieceRow)
+////			{
+////				validMove = true;
+////			}
+////			else if ((zoneCol == (pieceCol+2) || zoneCol == (pieceCol-2))&&zoneRow == pieceRow && pawnFirstMove)
+////			{
+////				validMove = true;
+////				piece.GetComponent<PawnBehaviourScript>().firstMove = false;
+////			}
+////			break;
+////		case "Rook":
+////			if(zoneCol == pieceCol || zoneRow == pieceRow)
+////				validMove = true;
+////			break;
+////		case "Bishop":
+////			for (int i = 1; i < 8; i++) 
+////			{
+////				if(zoneCol == pieceCol + i && zoneRow == pieceRow + i || zoneCol == pieceCol + i && zoneRow == pieceRow - i ||
+////				   zoneCol == pieceCol - i && zoneRow == pieceRow + i || zoneCol == pieceCol - i && zoneRow == pieceRow - i)
+////				{
+////					validMove = true;
+////					break;
+////				}
+////			}
+////			break;
+////		case "Knight":
+////			if(zoneCol == pieceCol + 1 && zoneRow == pieceRow + 2 || zoneCol == pieceCol + 1 && zoneRow == pieceRow - 2 ||
+////			   zoneCol == pieceCol - 1 && zoneRow == pieceRow + 2 || zoneCol == pieceCol - 1 && zoneRow == pieceRow - 2 ||
+////			   zoneCol == pieceCol + 2 && zoneRow == pieceRow + 1 || zoneCol == pieceCol + 2 && zoneRow == pieceRow - 1 ||
+////			   zoneCol == pieceCol - 2 && zoneRow == pieceRow + 1 || zoneCol == pieceCol - 2 && zoneRow == pieceRow - 1)
+////				validMove = true;
+////			break;
+////		case "Queen":
+////			if(zoneCol == pieceCol || zoneRow == pieceRow)
+////				validMove = true;
+////			for (int i = 1; i < 8; i++) 
+////			{
+////				if( zoneCol == pieceCol + i && zoneRow == pieceRow + i || zoneCol == pieceCol + i && zoneRow == pieceRow - i ||
+////			   zoneCol == pieceCol - i && zoneRow == pieceRow + i || zoneCol == pieceCol - i && zoneRow == pieceRow - i)
+////					validMove = true;
+////			}
+////			break;
+////		case "King":
+////			if(zoneCol == pieceCol && zoneRow == pieceRow + 1 || zoneCol == pieceCol -1 ||
+////			   zoneCol == pieceCol + 1 && zoneRow == pieceRow || zoneCol == pieceCol + 1 && zoneRow == pieceRow + 1 || zoneCol == pieceCol + 1 && zoneRow == pieceRow - 1 ||
+////			   zoneCol == pieceCol - 1 && zoneRow == pieceRow || zoneCol == pieceCol - 1 && zoneRow == pieceRow + 1 || zoneCol == pieceCol - 1 && zoneRow == pieceRow - 1)
+////				validMove = true;
+////			break;
+////		default:
+////			break;
+////		}
+//		if(zone.occupado)
+//		{
+//			char col = zone.column;
+//			int row = zone.row;
+//			
+//			PawnBehaviourScript[] piecesContainingDestructor = FindObjectsOfType<PawnBehaviourScript>();
+//			foreach (PawnBehaviourScript p in piecesContainingDestructor) 
+//			{
+//				if (p.currentCol == col && p.currentRow == row)
+//					Destroy(p.gameObject);
+//			}
+//		}
+//		Destroy (piece);
+////			piece = (GameObject)Instantiate (piece, bc.bounds.center - offset, Quaternion.identity);
+//		zone.occupado = false;
+//	}
 
 	public static ZoneScript FindContainingZone(GameObject piece)
 	{
