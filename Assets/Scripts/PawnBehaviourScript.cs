@@ -36,7 +36,10 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 				{
 					// Target is black
 					if (target.containedPiece.colour == "Black")
+					{
+						firstMove = false;
 						return true;
+					}
 					else
 						return false;					
 				}
@@ -45,7 +48,10 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 				{	
 					// Target is white
 					if (target.containedPiece.colour == "White")
+					{
+						firstMove = false;
 						return true;
+					}
 					else
 						return false;					
 				}
@@ -59,7 +65,10 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 				if (colour == "White" && target.row == currentRow + 1) 
 				{
 					if (!target.occupado)
+					{
+						firstMove = false;
 						return true;
+					}
 					else
 						return false;					
 				}
@@ -70,13 +79,19 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 						if (IsOccupied(target.column, target.row - 1) || IsOccupied(target.column, target.row))
 							return false;
 						else
+						{
+							firstMove = false;
 							return true;
+						}
 				}
 				// Pawn is black and moving one place
 				else if (colour == "Black" && target.row == currentRow - 1) 
 				{
 					if (!target.occupado)
+					{
+						firstMove = false;
 						return true;
+					}
 					else
 						return false;	
 				}
@@ -87,7 +102,10 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 					if (IsOccupied(target.column, target.row + 1) || IsOccupied(target.column, target.row))
 						return false;
 					else
-						return true;
+					{
+						 firstMove = false;
+							return true;
+					}
 				}
 				return false;
 			}
@@ -193,7 +211,18 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 				}
 				return true;
 			}
-			 // Target is diagonal to bishop
+			// Target is in same column
+			else if (target.column.Equals(currentCol)) 
+			{
+				// Check places between piece and target are vacant
+				int distance = Mathf.Abs(target.row - currentRow);
+				for (int i = 1; i < distance; i++) {
+					if(IsOccupied(currentCol, currentRow + i))
+						return false;
+				}
+				return true;
+			}
+			 // Target is diagonal to queen
 			else if (distanceCol == distanceRow)
 			{
 				// Determine direction of target
@@ -240,7 +269,7 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 			// King isn't trying to take a piece of the same colour
 			if (target.occupado && target.containedPiece.colour == colour) 
 				return false;
-			if (distanceCol == 1 && distanceRow == 1)
+				if ((distanceCol == 0 && distanceRow == 1) || (distanceCol == 1 && distanceRow == 0) || (distanceCol == 1 && distanceRow == 1))
 				return true;
 			break;
 		default:
@@ -267,6 +296,7 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 	public void Move (char col, int row)
 	{
 		GameController.FindContainingZone (this.gameObject).occupado = false;
+		GameController.FindContainingZone (this.gameObject).containedPiece = null;
 		ZoneScript TargetZone = GameController.SelectZone(col, row);
 		if (TargetZone.occupado)
 		{
