@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class PopulateBoard : MonoBehaviour {
-
+    
 	private Vector3 offset = new Vector3 (0.0F, 1.0F); //Used when instantiating pieces, this is distance above the board
 
 	public GameObject pawn;
@@ -36,7 +36,7 @@ public class PopulateBoard : MonoBehaviour {
 			if (boxCollider.name == "A2" || boxCollider.name == "B2" || boxCollider.name == "C2" || boxCollider.name == "D2" || boxCollider.name == "E2" || boxCollider.name == "F2" || boxCollider.name == "G2" || boxCollider.name == "H2")
 			{
 				pieceName = "Pawn " + pawnCount.ToString();
-				GameObject Pawn = (GameObject)Instantiate(pawn, boxCollider.bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
+				GameObject Pawn = (GameObject)Instantiate(pawn, boxCollider.bounds.center - offset, Quaternion.identity);
 				Pawn.tag = "Pawn";
 				Pawn.name = pieceName;
 				Pawn.AddComponent<PawnBehaviourScript>();
@@ -48,7 +48,7 @@ public class PopulateBoard : MonoBehaviour {
 			else if (boxCollider.name == "A7" || boxCollider.name == "B7" || boxCollider.name == "C7" || boxCollider.name == "D7" || boxCollider.name == "E7" || boxCollider.name == "F7" || boxCollider.name == "G7" || boxCollider.name == "H7")
 			{
 				pieceName = "Pawn " + pawnCount.ToString();
-				GameObject Pawn = (GameObject)Instantiate(blackPawn, boxCollider.bounds.center - offset, Quaternion.identity);
+				GameObject Pawn = (GameObject)Instantiate(blackPawn, boxCollider.bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
 				Pawn.tag = "Pawn";
 				Pawn.name = pieceName;
 				Pawn.AddComponent<PawnBehaviourScript>();
@@ -59,7 +59,7 @@ public class PopulateBoard : MonoBehaviour {
 			else if (boxCollider.name == "A1" || boxCollider.name == "H1" )
 			{
 				pieceName = "Rook " + rookCount.ToString();
-				GameObject Rook = (GameObject)Instantiate(rook, boxCollider.bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
+				GameObject Rook = (GameObject)Instantiate(rook, boxCollider.bounds.center - offset, Quaternion.identity);
 				Rook.tag = "Rook";
 				Rook.name = pieceName;
 				Rook.AddComponent<PawnBehaviourScript>();
@@ -69,7 +69,7 @@ public class PopulateBoard : MonoBehaviour {
 			}
 			else if (boxCollider.name == "A8" || boxCollider.name == "H8") {
 				pieceName = "Rook " + rookCount.ToString();
-				GameObject Rook = (GameObject)Instantiate(blackRook, boxCollider.bounds.center - offset, Quaternion.identity);
+				GameObject Rook = (GameObject)Instantiate(blackRook, boxCollider.bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
 				Rook.tag = "Rook";
 				Rook.name = pieceName;
 				Rook.AddComponent<PawnBehaviourScript>();
@@ -80,7 +80,7 @@ public class PopulateBoard : MonoBehaviour {
 			else if (boxCollider.name == "B1" || boxCollider.name == "G1")
 			{
 				pieceName = "Knight " + knightCount.ToString();
-				GameObject Knight = (GameObject)Instantiate(knight, boxCollider.bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
+				GameObject Knight = (GameObject)Instantiate(knight, boxCollider.bounds.center - offset, Quaternion.identity);
 				Knight.tag = "Knight";
 				Knight.name = pieceName;
 				Knight.AddComponent<PawnBehaviourScript>().currentCol = 'A';
@@ -90,7 +90,7 @@ public class PopulateBoard : MonoBehaviour {
 			}
 			else if (boxCollider.name == "B8" || boxCollider.name == "G8") {
 				pieceName = "Knight " + knightCount.ToString();
-				GameObject Knight = (GameObject)Instantiate(blackKnight, boxCollider.bounds.center - offset, Quaternion.identity);
+				GameObject Knight = (GameObject)Instantiate(blackKnight, boxCollider.bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
 				Knight.tag = "Knight";
 				Knight.name = pieceName;
 				Knight.AddComponent<PawnBehaviourScript>().currentCol = 'A';
@@ -101,7 +101,7 @@ public class PopulateBoard : MonoBehaviour {
 			else if (boxCollider.name == "C1" || boxCollider.name == "F1")
 			{
 				pieceName = "Bishop " + bishopCount.ToString();
-				GameObject Bishop = (GameObject)Instantiate(bishop, boxCollider.bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
+				GameObject Bishop = (GameObject)Instantiate(bishop, boxCollider.bounds.center - offset, Quaternion.identity);
 				Bishop.tag = "Bishop";
 				Bishop.name = pieceName;
 				Bishop.AddComponent<PawnBehaviourScript>();
@@ -112,7 +112,7 @@ public class PopulateBoard : MonoBehaviour {
 			else if (boxCollider.name == "C8" || boxCollider.name == "F8")
 			{
 				pieceName = "Bishop " + bishopCount.ToString();
-				GameObject Bishop = (GameObject)Instantiate(blackBishop, boxCollider.bounds.center - offset, Quaternion.identity);
+				GameObject Bishop = (GameObject)Instantiate(blackBishop, boxCollider.bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
 				Bishop.tag = "Bishop";
 				Bishop.name = pieceName;
 				Bishop.AddComponent<PawnBehaviourScript>();
@@ -123,7 +123,7 @@ public class PopulateBoard : MonoBehaviour {
 			else if (boxCollider.name == "D1")
 			{
 				pieceName = "Queen " + queenCount.ToString();
-				GameObject Queen = (GameObject)Instantiate(queen, boxCollider.bounds.center - offset, Quaternion.AngleAxis(90, Vector3.up));
+				GameObject Queen = (GameObject)Instantiate(queen, boxCollider.bounds.center - offset, Quaternion.AngleAxis(270, Vector3.up));
 				Queen.tag = "Queen";
 				Queen.name = pieceName;
 				Queen.AddComponent<PawnBehaviourScript>();
@@ -133,7 +133,7 @@ public class PopulateBoard : MonoBehaviour {
 			}
 			else if (boxCollider.name == "D8") {
 				pieceName = "Queen " + queenCount.ToString();
-				GameObject Queen = (GameObject)Instantiate(blackQueen, boxCollider.bounds.center - offset, Quaternion.AngleAxis(270, Vector3.up));
+				GameObject Queen = (GameObject)Instantiate(blackQueen, boxCollider.bounds.center - offset, Quaternion.AngleAxis(90, Vector3.up));
 				Queen.tag = "Queen";
 				Queen.name = pieceName;
 				Queen.AddComponent<PawnBehaviourScript>();
@@ -144,7 +144,7 @@ public class PopulateBoard : MonoBehaviour {
 			else if (boxCollider.name == "E1")
 			{
 				pieceName = "King " + kingCount.ToString();
-				GameObject King = (GameObject)Instantiate(king, boxCollider.bounds.center - offset, Quaternion.AngleAxis(90, Vector3.up));
+				GameObject King = (GameObject)Instantiate(king, boxCollider.bounds.center - offset, Quaternion.AngleAxis(270, Vector3.up));
 				King.tag = "King";
 				King.name = pieceName;
 				King.AddComponent<PawnBehaviourScript>();
@@ -154,7 +154,7 @@ public class PopulateBoard : MonoBehaviour {
 			}
 			else if (boxCollider.name == "E8") {
 				pieceName = "King " + kingCount.ToString();
-				GameObject King = (GameObject)Instantiate(blackKing, boxCollider.bounds.center - offset, Quaternion.AngleAxis(270, Vector3.up));
+				GameObject King = (GameObject)Instantiate(blackKing, boxCollider.bounds.center - offset, Quaternion.AngleAxis(90, Vector3.up));
 				King.tag = "King";
 				King.name = pieceName;
 				King.AddComponent<PawnBehaviourScript>();
@@ -185,18 +185,88 @@ public class PopulateBoard : MonoBehaviour {
 		}
 	}
 
-	public void OnLevelWasLoaded()
-	{
-		ColourHalfThePiecesBlack();
-	}
-
-	public void ColourHalfThePiecesBlack()
-	{
-		Debug.Log("HalfBlackPrince");
-		PawnBehaviourScript[] pieces = MonoBehaviour.FindObjectsOfType<PawnBehaviourScript>();
-		for (int i = 0; i < pieces.Length; i++) {
-			if (pieces[i].currentRow == 7 || pieces[i].currentRow == 8)
-				pieces[i].colour = "Black";
-		}
-	}
+    public void SwitchPieces(PawnBehaviourScript piece, string newType)
+    {
+        GameObject Replacement = new GameObject();
+        if ( piece.colour == "White" )
+        {
+            switch ( newType )
+            {
+                case "Queen":
+                    Replacement = (GameObject) Instantiate(queen, GameController.FindContainingZone(piece.gameObject).GetComponent<BoxCollider>().bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
+                    Destroy(GameController.FindContainingZone(piece.gameObject).containedPiece.gameObject);
+                    Replacement.tag = "Queen";
+                    Replacement.AddComponent<PawnBehaviourScript>();
+                    Replacement.AddComponent<Rigidbody>();
+                    Replacement.AddComponent<BoxCollider>();
+                    break;
+                case "Knight":
+                    Replacement = (GameObject) Instantiate(knight, GameController.FindContainingZone(piece.gameObject).GetComponent<BoxCollider>().bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
+                    Destroy(GameController.FindContainingZone(piece.gameObject).containedPiece.gameObject);
+                    Replacement.tag = "Knight";
+                    Replacement.AddComponent<PawnBehaviourScript>();
+                    Replacement.AddComponent<Rigidbody>();
+                    Replacement.AddComponent<BoxCollider>();
+                    break;
+                case "Rook":
+                    Replacement = (GameObject) Instantiate(rook, GameController.FindContainingZone(piece.gameObject).GetComponent<BoxCollider>().bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
+                    Destroy(GameController.FindContainingZone(piece.gameObject).containedPiece.gameObject);
+                    Replacement.tag = "Rook";
+                    Replacement.AddComponent<PawnBehaviourScript>();
+                    Replacement.AddComponent<Rigidbody>();
+                    Replacement.AddComponent<BoxCollider>();
+                    break;
+                case "Bishop":
+                    Replacement = (GameObject) Instantiate(bishop, GameController.FindContainingZone(piece.gameObject).GetComponent<BoxCollider>().bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
+                    Destroy(GameController.FindContainingZone(piece.gameObject).containedPiece.gameObject);
+                    Replacement.tag = "Bishop";
+                    Replacement.AddComponent<PawnBehaviourScript>();
+                    Replacement.AddComponent<Rigidbody>();
+                    Replacement.AddComponent<BoxCollider>();
+                    break;
+                default:
+                    break;
+            }            
+        }
+        else if ( piece.colour == "Black" )
+        {
+            switch ( newType )
+            {
+                case "Queen":
+                    Replacement = (GameObject) Instantiate(blackQueen, GameController.FindContainingZone(piece.gameObject).GetComponent<BoxCollider>().bounds.center - offset, Quaternion.identity);
+                    Destroy(GameController.FindContainingZone(piece.gameObject).containedPiece.gameObject);
+                    Replacement.tag = "Queen";
+                    Replacement.AddComponent<PawnBehaviourScript>();
+                    Replacement.AddComponent<Rigidbody>();
+                    Replacement.AddComponent<BoxCollider>();
+                    break;
+                case "Knight":
+                    Replacement = (GameObject) Instantiate(blackKnight, GameController.FindContainingZone(piece.gameObject).GetComponent<BoxCollider>().bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
+                    Destroy(GameController.FindContainingZone(piece.gameObject).containedPiece.gameObject);
+                    Replacement.tag = "Knight";
+                    Replacement.AddComponent<PawnBehaviourScript>();
+                    Replacement.AddComponent<Rigidbody>();
+                    Replacement.AddComponent<BoxCollider>();
+                    break;
+                case "Rook":
+                    Replacement = (GameObject) Instantiate(blackRook, GameController.FindContainingZone(piece.gameObject).GetComponent<BoxCollider>().bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
+                    Destroy(GameController.FindContainingZone(piece.gameObject).containedPiece.gameObject);
+                    Replacement.tag = "Rook";
+                    Replacement.AddComponent<PawnBehaviourScript>();
+                    Replacement.AddComponent<Rigidbody>();
+                    Replacement.AddComponent<BoxCollider>();
+                    break;
+                case "Bishop":
+                    Replacement = (GameObject) Instantiate(blackBishop, GameController.FindContainingZone(piece.gameObject).GetComponent<BoxCollider>().bounds.center - offset, Quaternion.AngleAxis(180, Vector3.up));
+                    Destroy(GameController.FindContainingZone(piece.gameObject).containedPiece.gameObject);
+                    Replacement.tag = "Bishop";
+                    Replacement.AddComponent<PawnBehaviourScript>();
+                    Replacement.AddComponent<Rigidbody>();
+                    Replacement.AddComponent<BoxCollider>();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }

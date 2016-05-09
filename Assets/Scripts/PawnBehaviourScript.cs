@@ -25,7 +25,7 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 	{
 		int distanceCol = Mathf.Abs((int)currentCol - (int)target.column);
 		int distanceRow = Mathf.Abs(currentRow - target.row);
-		switch (this.gameObject.tag) {
+		switch (this.tag) {
 		case "Pawn":
 			/*** Pawn taking another piece ***/
 			//Either side of the pawn and occupied
@@ -307,6 +307,10 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 		//Destroy (this.gameObject);
 	}
 
+    public void PromoteMe(string type)
+    {
+
+    }
 	#region IPointerClickHandler implementation
 
 	public void OnPointerClick (PointerEventData eventData)

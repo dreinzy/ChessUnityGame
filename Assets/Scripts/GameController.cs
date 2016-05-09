@@ -4,8 +4,6 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-//	private double _boardWidth;
-//	private double _boardHeight;
 	private bool player1Turn = true;
 	private bool pieceSelect = true;
 	private bool zoneSelect = false;
@@ -14,15 +12,18 @@ public class GameController : MonoBehaviour
 	public GameObject camera2;
 	public GameObject SelectedPiece;
 	public ZoneScript TargetZone;
+    public ZoneScript SelectedZone;
 	public Light greenHalo;
 	public Light redHalo;
 	public AudioSource nope;
+    public GameObject promotionMenu;
 
 	void Start ()
 	{
-		//Debug.Log("(char)1: " + (char)1 + "(char)2: " + (char)2 + "(int)A: " + (int)'A' + "(int)B: " + (int)'B');
+       // SaveLoad.CreateGame(System.DateTime.Now.Date.ToString());
 		Player (1);
-	}
+        promotionMenu.SetActive(false);
+    }
 
 	private void Player(int playerNo)
 	{
@@ -54,11 +55,16 @@ public class GameController : MonoBehaviour
 			{
 				GameObject[] DefaultPiece = GameObject.FindGameObjectsWithTag("King");
 				foreach (var king in DefaultPiece) {
-					if (player1Turn && king.GetComponent<PawnBehaviourScript> ().colour == "White")
-						SelectedPiece = king;
-					else if (!player1Turn && king.GetComponent<PawnBehaviourScript> ().colour == "Black") {
-						SelectedPiece = king;
-					}
+                    if ( player1Turn && king.GetComponent<PawnBehaviourScript>().colour == "White" )
+                    {
+                        SelectedPiece = king;
+                        SelectedZone = FindContainingZone(king);
+                    }
+                    else if ( !player1Turn && king.GetComponent<PawnBehaviourScript>().colour == "Black" )
+                    {
+                        SelectedPiece = king;
+                        SelectedZone = FindContainingZone(king);
+                    }
 				}
 			}
 			/*** GAME OVER***/
@@ -72,7 +78,7 @@ public class GameController : MonoBehaviour
 			{
 				if (pieceSelect)
 				{
-					FindNextPiece(ref piece);
+					FindNextPiece();
 				}
 				else if (zoneSelect)
 				{
@@ -84,8 +90,11 @@ public class GameController : MonoBehaviour
 						if(piece.CheckMove(TargetZone))
 						{
 							piece.Move(TargetZone.column, TargetZone.row);
-							piece= null;
+                            string move = piece.name + "," + TargetZone.column + TargetZone.row + "\n";
+                            SaveLoad.Update(move);
+                            piece = null;
 							TargetZone = null;
+                            SelectedZone = null;
 							SelectedPiece = null;
 							pieceSelect = true;
 							if (player1Turn)
@@ -108,223 +117,79 @@ public class GameController : MonoBehaviour
 				nope.Play();
 			}
 
-			if(SelectedPiece != null)
-				redHalo.transform.position = (SelectedPiece.transform.position + new Vector3(0, 3.5f, 0));
-			else
-				redHalo.transform.position = new Vector3(250, 250, 250);
+            if ( SelectedZone != null )
+                redHalo.transform.position = (SelectedZone.transform.position + new Vector3(0, 3.5f, 0) );
+            //redHalo.transform.position = (SelectedPiece.transform.position + new Vector3(0, 3.5f, 0));
+            else
+                redHalo.transform.position = new Vector3(250, 250, 250);
 			if(TargetZone != null)
 				greenHalo.transform.position = (TargetZone.transform.position + new Vector3(0, 1.5f, 0));
 			else
 				greenHalo.transform.position = new Vector3 (250, 250, 250);
 		}
 	}
-
-	public PawnBehaviourScript FindNextPiece(ref PawnBehaviourScript piece)
-	{
-		bool pieceFound = false;
-		if (player1Turn) 
-		{	
-			int spacesToEdge = 0;
-			switch (piece.currentCol)
-			{
-				case 'G':
-					spacesToEdge = 1 ;
-					break;
-				case 'F':
-					spacesToEdge = 2;
-					break;
-				case 'E':
-					spacesToEdge = 3;
-					break;
-				case 'D':
-					spacesToEdge = 4;
-					break;
-				case 'C':
-					spacesToEdge = 5;
-					break;
-				case 'B':
-					spacesToEdge = 6;
-					break;
-				case 'A':
-					spacesToEdge = 7;
-					break;
-				default:
-					break;
-			}
-			if (Input.GetButtonDown("Up")) {
-				for (int j = 1; j < 8 && !pieceFound; j++)
-				{
-					for(int i = 1; (i <= (8 - piece.currentRow)) && !pieceFound; i++) 
-					{
-                        if (j == 1)
-                        {
-                            if (SelectZone(piece.currentCol, piece.currentRow + i).occupado && SelectPiece(piece.currentCol, piece.currentRow + i).colour == "White")
-                            {
-                                SelectedPiece = SelectPiece(piece.currentCol, piece.currentRow + i).gameObject;
-                                pieceFound = true;
-                            }
-                        }
-						if(!pieceFound && j <= spacesToEdge && SelectZone((char)(piece.currentCol + (char)j), piece.currentRow + i).occupado 
-							&& SelectPiece((char)(piece.currentCol + (char)j), piece.currentRow + i).colour == "White")
-						{
-							SelectedPiece = SelectPiece((char)(piece.currentCol + (char)j), piece.currentRow + i).gameObject;
-							pieceFound = true;
-						}
-						else if(!pieceFound && j < (8 - spacesToEdge) && SelectZone((char)(piece.currentCol - (char)j), piece.currentRow + i).occupado 
-							&& SelectPiece((char)(piece.currentCol - (char)j), piece.currentRow + i).colour == "White")
-						{
-							SelectedPiece = SelectPiece((char)(piece.currentCol - (char)j), piece.currentRow + i).gameObject;
-							pieceFound = true;
-						}
-					}
-				}
-			}
-			else if (Input.GetButtonDown("Down"))
+    
+    public void FindNextPiece()
+    {
+        if ( SelectedZone != null )
+        {
+            if ( player1Turn )
             {
-                for (int j = 1; j < 8 && !pieceFound; j++)
+                if ( Input.GetButtonDown("Up") && SelectedZone.row <= 8 )
                 {
-                    for (int i = 1; (i <= piece.currentRow) && !pieceFound; i++)
-                    {
-                        if (j == 1)
-                        {
-                            if (SelectZone(piece.currentCol, piece.currentRow - i).occupado && SelectPiece(piece.currentCol, piece.currentRow - i).colour == "White")
-                            {
-                                SelectedPiece = SelectPiece(piece.currentCol, piece.currentRow - i).gameObject;
-                                pieceFound = true;
-                            }
-                        }
-                        if (!pieceFound && j <= spacesToEdge && SelectZone((char)(piece.currentCol + (char)j), piece.currentRow - i).occupado
-                            && SelectPiece((char)(piece.currentCol + (char)j), piece.currentRow - i).colour == "White")
-                        {
-                            SelectedPiece = SelectPiece((char)(piece.currentCol + (char)j), piece.currentRow - i).gameObject;
-                            pieceFound = true;
-                        }
-                        else if (!pieceFound && j < (8 - spacesToEdge) && SelectZone((char)(piece.currentCol - (char)j), piece.currentRow - i).occupado
-                            && SelectPiece((char)(piece.currentCol - (char)j), piece.currentRow - i).colour == "White")
-                        {
-                            SelectedPiece = SelectPiece((char)(piece.currentCol - (char)j), piece.currentRow - i).gameObject;
-                            pieceFound = true;
-                        }
-                    }
+                    SelectedZone = SelectZone(SelectedZone.column, SelectedZone.row + 1);
+                }
+                else if ( Input.GetButtonDown("Down") && SelectedZone.row > 0 )
+                {
+                    SelectedZone = SelectZone(SelectedZone.column, SelectedZone.row - 1);
+                }
+                else if ( Input.GetButtonDown("Right") && SelectedZone.column != 'H' )
+                {
+                    SelectedZone = SelectZone((char) ( SelectedZone.column + (char) 1 ), SelectedZone.row);
+                }
+                else if ( Input.GetButtonDown("Left") && SelectedZone.column != 'A' )
+                {
+                    SelectedZone = SelectZone((char) ( SelectedZone.column - (char) 1 ), SelectedZone.row);
+                }
+                if ( Input.GetButtonDown("Select") && SelectedZone.occupado && SelectedZone.containedPiece.colour == "White" )
+                {
+                    SelectedPiece = SelectedZone.containedPiece.gameObject;
+                    pieceSelect = false;
+                    zoneSelect = true;
                 }
             }
-			else if (Input.GetButtonDown("Left")) {
-				for(int i = 1; i < 8 && !pieceFound; i++)
-				{
-                    for (int j = 1; j <= spacesToEdge && !pieceFound; j++)
-                    {
-                        if (i == 1)
-                        {
-                            if (SelectZone((char)(piece.currentCol + (char) j), piece.currentRow).occupado && SelectZone((char)(piece.currentCol + (char)j), piece.currentRow).containedPiece.colour == "White")
-                            {
-                                SelectedPiece = SelectPiece((char)(piece.currentCol + (char)j), piece.currentRow).gameObject;
-                                pieceFound = true;
-                            }
-                        }
-                        if (!pieceFound && piece.currentRow + i < 8 && SelectZone((char)(piece.currentCol + (char)j), piece.currentRow + i).occupado && SelectPiece((char)(piece.currentCol + (char)j), piece.currentRow = i).colour == "White")
-                        {
-                            SelectedPiece = SelectPiece((char)(piece.currentCol + (char)j), piece.currentRow + i).gameObject;
-                            pieceFound = true;
-                        }
-                        else if (!pieceFound && piece.currentRow - i > 0 && SelectZone((char)(piece.currentCol + (char)j), piece.currentRow - i).occupado && SelectPiece((char)(piece.currentCol + (char)j), piece.currentRow = i).colour == "White")
-                        {
-                            SelectedPiece = SelectPiece((char)(piece.currentCol + (char)j), piece.currentRow - i).gameObject;
-                            pieceFound = true;
-                        }
-                    }
-				}
-			}
-			else if (Input.GetButtonDown("Right")) 
-			{
-				for(int i = 1; i < (int)piece.currentCol && !pieceFound; i++)
-				{
-					if(SelectZone((char)(piece.currentCol - (char)i), piece.currentRow).occupado && SelectPiece((char)(piece.currentCol - (char)i), piece.currentRow).colour == "White")
-					{
-						SelectedPiece = SelectPiece((char)(piece.currentCol - (char)i), piece.currentRow).gameObject;
-						pieceFound = true;
-					}
-				}
-			}
-		}
-		else 
-		{
-			int spacesToEdge = 0;
-			switch (piece.currentCol)
-			{
-				case 'G':
-					spacesToEdge = 1 ;
-					break;
-				case 'F':
-					spacesToEdge = 2;
-					break;
-				case 'E':
-					spacesToEdge = 3;
-					break;
-				case 'D':
-					spacesToEdge = 4;
-					break;
-				case 'C':
-					spacesToEdge = 5;
-					break;
-				case 'B':
-					spacesToEdge = 6;
-					break;
-				case 'A':
-					spacesToEdge = 7;
-					break;
-				default:
-					break;
-			}
-			if (Input.GetButtonDown("Down")) {
-				for(int i = 1; (i <= (8 - piece.currentRow)) && !pieceFound; i++)
-				{
-					if(SelectZone(piece.currentCol, piece.currentRow + i).occupado && SelectPiece(piece.currentCol, piece.currentRow + i).colour == "Black")
-					{
-						SelectedPiece = SelectPiece(piece.currentCol, piece.currentRow + i).gameObject;
-						pieceFound = true;
-					}
-				}
-			}
-			else if (Input.GetButtonDown("Up")) {
-				for(int i = 1; (i < piece.currentRow) && !pieceFound; i++)
-				{
-					if(SelectZone(piece.currentCol, piece.currentRow - i).occupado && SelectPiece(piece.currentCol, piece.currentRow - i).colour == "Black")
-					{
-						SelectedPiece = SelectPiece(piece.currentCol, piece.currentRow - i).gameObject;
-						pieceFound = true;
-					}
-				}
-			}
-			else if (Input.GetButtonDown("Right")) {
-				for(int i = 1; i <= spacesToEdge && !pieceFound; i++)
-				{
-					if(SelectZone((char)(piece.currentCol + (char)i), piece.currentRow).occupado && SelectPiece((char)(piece.currentCol + (char)i), piece.currentRow).colour == "Black")
-					{
-						SelectedPiece = SelectPiece((char)(piece.currentCol + (char)i), piece.currentRow).gameObject;
-						pieceFound = true;
-					}
-				}
-			}
-			else if (Input.GetButtonDown("Left")) 
-			{
-				for(int i = 1; i < (int)piece.currentCol && !pieceFound; i++)
-				{
-					if(SelectZone((char)(piece.currentCol - (char)i), piece.currentRow).occupado && SelectPiece((char)(piece.currentCol - (char)i), piece.currentRow).colour == "Black")
-					{
-						SelectedPiece = SelectPiece((char)(piece.currentCol - (char)i), piece.currentRow).gameObject;
-						pieceFound = true;
-					}
-				}
-			}
-		}
-		if (Input.GetButtonDown("Select")) {
-			pieceSelect = false;
-			zoneSelect = true;
-		}
-		return SelectedPiece.GetComponent<PawnBehaviourScript>();
-	}
+            else
+            {
+                if ( Input.GetButtonDown("Down") )
+                {
+                    SelectedZone = SelectZone(SelectedZone.column, SelectedZone.row + 1);
+                }
+                else if ( Input.GetButtonDown("Up") )
+                {
+                    SelectedZone = SelectZone(SelectedZone.column, SelectedZone.row - 1);
+                }
+                else if ( Input.GetButtonDown("Left") )
+                {
+                    SelectedZone = SelectZone((char) ( SelectedZone.column + (char) 1 ), SelectedZone.row);
+                }
+                else if ( Input.GetButtonDown("Right") )
+                {
+                    SelectedZone = SelectZone((char) ( SelectedZone.column - (char) 1 ), SelectedZone.row);
+                }
+                if ( Input.GetButtonDown("Select") && SelectedZone.occupado && SelectedZone.containedPiece.colour == "Black" )
+                {
+                    SelectedPiece = SelectedZone.containedPiece.gameObject;
+                    pieceSelect = false;
+                    zoneSelect = true;
+                }
+            }
+        }
+        else
+            if ( SelectedPiece != null )
+               SelectedZone = FindContainingZone(SelectedPiece);
+    }
 
-	public ZoneScript FindNextZone(ref ZoneScript TargetZone)
+    public ZoneScript FindNextZone(ref ZoneScript TargetZone)
 	{
 		if (player1Turn) 
 		{				
@@ -334,10 +199,10 @@ public class GameController : MonoBehaviour
 			else if (Input.GetButtonDown("Down")) {
 			TargetZone = SelectZone(TargetZone.column, TargetZone.row - 1);
 			}
-			else if (Input.GetButtonDown("Left")) {
+			else if (Input.GetButtonDown("Right")) {
 			TargetZone = SelectZone((char)(TargetZone.column + (char)1), TargetZone.row);
 			}
-			else if (Input.GetButtonDown("Right")) {
+			else if (Input.GetButtonDown("Left")) {
 			TargetZone = SelectZone((char)(TargetZone.column - (char)1), TargetZone.row);
 			}
 		}
@@ -349,10 +214,10 @@ public class GameController : MonoBehaviour
 			else if (Input.GetButtonDown("Down")) {
 			TargetZone = SelectZone(TargetZone.column, TargetZone.row + 1);
 			}
-			else if (Input.GetButtonDown("Left")) {
+			else if (Input.GetButtonDown("Right")) {
 			TargetZone = SelectZone((char)(TargetZone.column - (char)1), TargetZone.row);
 			}
-			else if (Input.GetButtonDown("Right")) {
+			else if (Input.GetButtonDown("Left")) {
 			TargetZone = SelectZone((char)(TargetZone.column + (char)1), TargetZone.row);
 			}
 		}
@@ -367,6 +232,25 @@ public class GameController : MonoBehaviour
 		}
 		return TargetZone.GetComponent<ZoneScript>();
 	}
+
+    public void PromotionMenu(bool on)
+    {
+        promotionMenu.SetActive(on);
+    }
+
+    public void PromotePiece(string u)
+    {
+        PopulateBoard pb = GameObject.FindObjectOfType<PopulateBoard>();
+        PawnBehaviourScript[] pieces = GameObject.FindObjectsOfType<PawnBehaviourScript>();
+        foreach ( var piece in pieces )
+            if ( piece.tag == "Pawn" )
+                if ( piece.currentRow == 1 || piece.currentRow == 8)
+                {
+                    pb.SwitchPieces(piece, u);
+                    break;
+                }
+        GameObject.FindGameObjectWithTag("Promotion").SetActive(false);
+    }
 		
 	public static ZoneScript FindContainingZone(GameObject piece)
 	{

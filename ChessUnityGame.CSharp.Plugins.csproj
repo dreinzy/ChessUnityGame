@@ -5,16 +5,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7D9FA8FD-5246-AD93-31AB-1BFDEEDA546F}</ProjectGuid>
+    <ProjectGuid>{5C5F3148-72FE-1940-D694-ED38A707061C}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
     <CompilerResponseFile></CompilerResponseFile>
-    <UnityProjectType>Game:1</UnityProjectType>
+    <UnityProjectType>GamePlugins:3</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.3.4f1</UnityVersion>
     <RootNamespace></RootNamespace>
@@ -63,32 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\ChessBoard.cs" />
-    <Compile Include="Assets\Scripts\GameController.cs" />
-    <Compile Include="Assets\Scripts\PawnBehaviourScript.cs" />
-    <Compile Include="Assets\Scripts\PopulateBoard.cs" />
-    <Compile Include="Assets\Scripts\Promotion.cs" />
-    <Compile Include="Assets\Scripts\SaveLoad.cs" />
-    <Compile Include="Assets\Scripts\ZoneScript.cs" />
-    <Compile Include="Assets\UnityAssets\Cameras\Scripts\AbstractTargetFollower.cs" />
-    <Compile Include="Assets\UnityAssets\Cameras\Scripts\AutoCam.cs" />
-    <Compile Include="Assets\UnityAssets\Cameras\Scripts\FreeLookCam.cs" />
-    <Compile Include="Assets\UnityAssets\Cameras\Scripts\HandHeldCam.cs" />
-    <Compile Include="Assets\UnityAssets\Cameras\Scripts\LookatTarget.cs" />
-    <Compile Include="Assets\UnityAssets\Cameras\Scripts\PivotBasedCameraRig.cs" />
-    <Compile Include="Assets\UnityAssets\Cameras\Scripts\ProtectCameraFromWallClip.cs" />
-    <Compile Include="Assets\UnityAssets\Cameras\Scripts\TargetFieldOfView.cs" />
-    <Compile Include="Assets\UnityAssets\CrossPlatformInput\Scripts\AxisTouchButton.cs" />
-    <Compile Include="Assets\UnityAssets\CrossPlatformInput\Scripts\ButtonHandler.cs" />
-    <Compile Include="Assets\UnityAssets\CrossPlatformInput\Scripts\CrossPlatformInputManager.cs" />
-    <Compile Include="Assets\UnityAssets\CrossPlatformInput\Scripts\InputAxisScrollbar.cs" />
-    <Compile Include="Assets\UnityAssets\CrossPlatformInput\Scripts\Joystick.cs" />
-    <Compile Include="Assets\UnityAssets\CrossPlatformInput\Scripts\MobileControlRig.cs" />
-    <Compile Include="Assets\UnityAssets\CrossPlatformInput\Scripts\PlatformSpecific\MobileInput.cs" />
-    <Compile Include="Assets\UnityAssets\CrossPlatformInput\Scripts\PlatformSpecific\StandaloneInput.cs" />
-    <Compile Include="Assets\UnityAssets\CrossPlatformInput\Scripts\TiltInput.cs" />
-    <Compile Include="Assets\UnityAssets\CrossPlatformInput\Scripts\TouchPad.cs" />
-    <Compile Include="Assets\UnityAssets\CrossPlatformInput\Scripts\VirtualInput.cs" />
+    <Compile Include="Assets\Standard Assets\Effects\ImageEffects\Scripts\PostEffectsBase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
