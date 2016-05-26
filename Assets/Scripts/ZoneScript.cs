@@ -3,11 +3,16 @@ using System.Collections;
 
 public class ZoneScript : MonoBehaviour
 {
+	private bool attackedByWhite;
+	private bool attackedByBlack;
 	public char column;
 	public int row;
 	public bool occupado = false;
 	public bool setupStep = true;
 	public PawnBehaviourScript containedPiece;
+
+	public bool AttackedByWhite { get; set; }
+	public bool AttackedByBlack { get; set; }
 
 	void OnTriggerEnter(Collider piece)
 	{

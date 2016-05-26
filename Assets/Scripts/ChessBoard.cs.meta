@@ -1,11 +1,23 @@
 fileFormatVersion: 2
 guid: 97b86041d8ff12947947aba02cbbf068
-timeCreated: 1459982533
+timeCreated: 1464112664
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
-  executionOrder: 0
+  defaultReferences:
+  - pawn: {fileID: 100002, guid: a983f39e23d951f45affc28b89ffe441, type: 3}
+  - rook: {fileID: 100010, guid: 857ea5287429c6640805096ecc43afac, type: 3}
+  - bishop: {fileID: 100000, guid: 3c49f52260240e6438cfc7e73e924537, type: 3}
+  - knight: {fileID: 100010, guid: 9db56cec05a0a9f4d925db50127971a4, type: 3}
+  - queen: {fileID: 100012, guid: d25f39f051a0b994ab6c41751e9fe58e, type: 3}
+  - king: {fileID: 100006, guid: 4e480ccf1f8398e43bf963288dfb7310, type: 3}
+  - blackPawn: {fileID: 100002, guid: 6abe4f7c082372f49b4e81f6f6fc4cb9, type: 3}
+  - blackRook: {fileID: 100010, guid: 87793d45936652a409ec1261e7bca47c, type: 3}
+  - blackBishop: {fileID: 100000, guid: 8f26833395b59984ba7a780b11979063, type: 3}
+  - blackKnight: {fileID: 100010, guid: 12bf4016227587f428def8916d7ff7b1, type: 3}
+  - blackQueen: {fileID: 100012, guid: 50483d1b622c27845bcc9edbb76b0dad, type: 3}
+  - blackKing: {fileID: 100006, guid: 550bbf8d463034143833d54678282775, type: 3}
+  executionOrder: 100
   icon: {instanceID: 0}
   userData: 
   assetBundleName: 

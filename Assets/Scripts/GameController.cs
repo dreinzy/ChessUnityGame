@@ -1,12 +1,14 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
 	private bool player1Turn = true;
 	private bool pieceSelect = true;
 	private bool zoneSelect = false;
+	public GameObject gameOver;
 
 	public GameObject camera1;
 	public GameObject camera2;
@@ -18,11 +20,16 @@ public class GameController : MonoBehaviour
 	public AudioSource nope;
     public GameObject promotionMenu;
 
+	public void NewGame()
+	{
+		SceneManager.LoadScene (1);
+	}
+
 	void Start ()
 	{
        // SaveLoad.CreateGame(System.DateTime.Now.Date.ToString());
 		Player (1);
-        promotionMenu.SetActive(false);
+		gameOver.SetActive (false);
     }
 
 	private void Player(int playerNo)
@@ -48,30 +55,22 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update () 
 	{
+		if (Mathf.Abs (Input.GetAxis ("Vertical")) == 1.0F || Mathf.Abs (Input.GetAxis ("Horizontal")) == 1.0F)
+			Debug.Log ("Sorry, controller input not yet supported.");
+		
 		if(Input.anyKeyDown)
 		{
 			// Select default piece (king), if none selected
 			if (SelectedPiece == null)
 			{
-				GameObject[] DefaultPiece = GameObject.FindGameObjectsWithTag("King");
-				foreach (var king in DefaultPiece) {
-                    if ( player1Turn && king.GetComponent<PawnBehaviourScript>().colour == "White" )
-                    {
-                        SelectedPiece = king;
-                        SelectedZone = FindContainingZone(king);
-                    }
-                    else if ( !player1Turn && king.GetComponent<PawnBehaviourScript>().colour == "Black" )
-                    {
-                        SelectedPiece = king;
-                        SelectedZone = FindContainingZone(king);
-                    }
+				SetDefaultPiece ();
+				// Game is over if a king can't be selected
+				if (SelectedPiece == null)
+				{
+					GameOver ();
 				}
 			}
-			/*** GAME OVER***/
-			if (SelectedPiece == null)
-			{
-				Debug.Log("GameOver");
-			}
+
 			PawnBehaviourScript piece = SelectedPiece.GetComponent<PawnBehaviourScript>();
 
 			try
@@ -86,7 +85,7 @@ public class GameController : MonoBehaviour
 						TargetZone = SelectZone(piece.currentCol, piece.currentRow);
 					FindNextZone(ref TargetZone);
 					if(!pieceSelect && !zoneSelect)
-					{	
+					{
 						if(piece.CheckMove(TargetZone))
 						{
 							piece.Move(TargetZone.column, TargetZone.row);
@@ -126,6 +125,28 @@ public class GameController : MonoBehaviour
 				greenHalo.transform.position = (TargetZone.transform.position + new Vector3(0, 1.5f, 0));
 			else
 				greenHalo.transform.position = new Vector3 (250, 250, 250);
+		}
+	}
+
+	public void GameOver()
+	{
+		gameOver.SetActive(true);
+	}
+
+	void SetDefaultPiece()
+	{
+		GameObject[] DefaultPiece = GameObject.FindGameObjectsWithTag("King");
+		foreach (var king in DefaultPiece) {
+			if ( player1Turn && king.GetComponent<PawnBehaviourScript>().colour == "White" )
+			{
+				SelectedPiece = king;
+				SelectedZone = FindContainingZone(king);
+			}
+			else if ( !player1Turn && king.GetComponent<PawnBehaviourScript>().colour == "Black" )
+			{
+				SelectedPiece = king;
+				SelectedZone = FindContainingZone(king);
+			}
 		}
 	}
     
@@ -240,13 +261,13 @@ public class GameController : MonoBehaviour
 
     public void PromotePiece(string u)
     {
-        PopulateBoard pb = GameObject.FindObjectOfType<PopulateBoard>();
+        ChessBoard pb = GameObject.FindObjectOfType<ChessBoard>();
         PawnBehaviourScript[] pieces = GameObject.FindObjectsOfType<PawnBehaviourScript>();
         foreach ( var piece in pieces )
             if ( piece.tag == "Pawn" )
                 if ( piece.currentRow == 1 || piece.currentRow == 8)
                 {
-                    pb.SwitchPieces(piece, u);
+                    pb.PromotePiece(piece, u);
                     break;
                 }
         GameObject.FindGameObjectWithTag("Promotion").SetActive(false);

@@ -16,10 +16,7 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 		currentRow = row;
 	}
 
-	public void ChangePieceToBlack()
-	{
-		colour = "Black";
-	}
+
 
 	public bool CheckMove(ZoneScript target)
 	{
@@ -118,23 +115,32 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 			// Target is in same row
 			if (target.row == currentRow) 
 			{
-					// Check places between piece and target are vacant
-					int distance = Mathf.Abs((int)target.column - (int)currentCol);
-					for (int i = 1; i < distance; i++) {
-						if(IsOccupied((char)(currentCol + (char)i), currentRow))
-						return false;
-					}
-					return true;
-			}
+                    // Check places between piece and target are vacant
+                    int distance = ( (int) target.column - (int) currentCol );
+                    for ( int i = 1; i < Mathf.Abs(distance); i++ )
+                    {
+                        if ( distance > 0 )
+                            if ( IsOccupied((char) ( currentCol + (char) i ), currentRow) )
+                                return false;
+                            else
+                            if ( IsOccupied((char) ( currentCol - (char) i ), currentRow) )
+                                return false;
+                    }
+                    return true;
+                }
 			// Target is in same column
 			else if (target.column.Equals(currentCol)) 
 			{
 					// Check places between piece and target are vacant
-					int distance = Mathf.Abs(target.row - currentRow);
-					for (int i = 1; i < distance; i++) {
-						if(IsOccupied(currentCol, currentRow + i))
-						return false;
-					}
+					int distance = target.row - currentRow;
+					for (int i = 1; i < Mathf.Abs(distance); i++) {
+                        if ( distance > 0 )
+                            if ( IsOccupied(currentCol, currentRow + i) )
+                                return false;
+                        else
+                            if ( IsOccupied(currentCol, currentRow - i) )
+                                return false;
+                    }
 					return true;
 			}
 			break;
@@ -204,24 +210,34 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 			if (target.row == currentRow) 
 			{
 				// Check places between piece and target are vacant
-				int distance = Mathf.Abs((int)target.column - (int)currentCol);
-				for (int i = 1; i < distance; i++) {
-					if(IsOccupied((char)(currentCol + (char)i), currentRow))
-						return false;
+				int distance = ((int)target.column - (int)currentCol);
+				for (int i = 1; i < Mathf.Abs(distance); i++)
+                {
+                        if ( distance > 0 )                        
+                            if ( IsOccupied((char) ( currentCol + (char) i ), currentRow) )
+                                return false;                        
+                        else                        
+                            if ( IsOccupied((char) ( currentCol - (char) i ), currentRow) )
+                                return false;                        
 				}
 				return true;
 			}
 			// Target is in same column
 			else if (target.column.Equals(currentCol)) 
 			{
-				// Check places between piece and target are vacant
-				int distance = Mathf.Abs(target.row - currentRow);
-				for (int i = 1; i < distance; i++) {
-					if(IsOccupied(currentCol, currentRow + i))
-						return false;
-				}
-				return true;
-			}
+                    // Check places between piece and target are vacant
+                    int distance = ( (int) target.column - (int) currentCol );
+                    for ( int i = 1; i < Mathf.Abs(distance); i++ )
+                    {
+                        if ( distance > 0 )
+                            if ( IsOccupied((char) ( currentCol + (char) i ), currentRow) )
+                                return false;
+                            else
+                            if ( IsOccupied((char) ( currentCol - (char) i ), currentRow) )
+                                return false;
+                    }
+                    return true;
+                }
 			 // Target is diagonal to queen
 			else if (distanceCol == distanceRow)
 			{
@@ -278,10 +294,6 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 		return false;
 	}
 
-	public void OnPointerDown()
-	{
-
-	}
 
 	private bool IsOccupied(char col, int row)
 	{
@@ -307,10 +319,7 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 		//Destroy (this.gameObject);
 	}
 
-    public void PromoteMe(string type)
-    {
 
-    }
 	#region IPointerClickHandler implementation
 
 	public void OnPointerClick (PointerEventData eventData)

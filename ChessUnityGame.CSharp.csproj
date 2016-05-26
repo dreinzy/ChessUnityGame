@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\ChessBoard.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
+    <Compile Include="Assets\Scripts\MenuBehaviour.cs" />
     <Compile Include="Assets\Scripts\PawnBehaviourScript.cs" />
     <Compile Include="Assets\Scripts\PopulateBoard.cs" />
     <Compile Include="Assets\Scripts\Promotion.cs" />
