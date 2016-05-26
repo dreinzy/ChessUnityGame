@@ -8,8 +8,9 @@ public class GameController : MonoBehaviour
 	private bool player1Turn = true;
 	private bool pieceSelect = true;
 	private bool zoneSelect = false;
-	public GameObject gameOver;
 
+	public bool check;
+	public bool checkMate;
 	public GameObject camera1;
 	public GameObject camera2;
 	public GameObject SelectedPiece;
@@ -19,6 +20,8 @@ public class GameController : MonoBehaviour
 	public Light redHalo;
 	public AudioSource nope;
     public GameObject promotionMenu;
+	public GameObject gameOverMenu;
+	public GameObject inCheck;
 
 	public void NewGame()
 	{
@@ -29,8 +32,56 @@ public class GameController : MonoBehaviour
 	{
        // SaveLoad.CreateGame(System.DateTime.Now.Date.ToString());
 		Player (1);
-		gameOver.SetActive (false);
+		gameOverMenu.SetActive (false);
+		inCheck.SetActive (false);
     }
+
+	private bool CheckForCheck()
+	{
+		GameObject whiteKing = new GameObject();
+		GameObject blackKing = new GameObject();
+		ArrayList whitePieces = new ArrayList ();
+		ArrayList blackPieces = new ArrayList ();
+		GameObject[] kings = GameObject.FindGameObjectsWithTag("King");
+		foreach (var king in kings)
+		{
+			if (king.GetComponent<PawnBehaviourScript> ().colour == "White")
+				whiteKing = king;
+			else
+				blackKing = king;
+		}
+		kings = null;
+		PawnBehaviourScript[] p = FindObjectsOfType<PawnBehaviourScript> ();
+		foreach (PawnBehaviourScript piece in p)
+		{
+			if (piece.tag != "King")
+			{				
+				if (piece.colour == "White")
+				{
+					whitePieces.Add (piece);
+				}
+				else
+				{
+					blackPieces.Add(piece);
+				}
+			}
+		}
+		p = null;
+		foreach (PawnBehaviourScript whitePiece in whitePieces)
+			if (whitePiece.CheckMove (FindContainingZone (blackKing)))
+			{
+				inCheck.SetActive (true);
+				return true;
+			}
+		foreach (PawnBehaviourScript blackPiece in blackPieces)
+			if (blackPiece.CheckMove (FindContainingZone (whiteKing)))
+			{
+				inCheck.SetActive (true);
+				return true;
+			}
+		inCheck.SetActive (false);
+		return false;
+	}
 
 	private void Player(int playerNo)
 	{
@@ -55,21 +106,19 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update () 
 	{
+		// TODO Controller input
 		if (Mathf.Abs (Input.GetAxis ("Vertical")) == 1.0F || Mathf.Abs (Input.GetAxis ("Horizontal")) == 1.0F)
 			Debug.Log ("Sorry, controller input not yet supported.");
 		
 		if(Input.anyKeyDown)
 		{
+			CheckForCheck();
 			// Select default piece (king), if none selected
 			if (SelectedPiece == null)
-			{
 				SetDefaultPiece ();
 				// Game is over if a king can't be selected
 				if (SelectedPiece == null)
-				{
 					GameOver ();
-				}
-			}
 
 			PawnBehaviourScript piece = SelectedPiece.GetComponent<PawnBehaviourScript>();
 
@@ -84,13 +133,15 @@ public class GameController : MonoBehaviour
 					if (TargetZone == null)
 						TargetZone = SelectZone(piece.currentCol, piece.currentRow);
 					FindNextZone(ref TargetZone);
+
+					//A piece and zone have been selected
 					if(!pieceSelect && !zoneSelect)
 					{
 						if(piece.CheckMove(TargetZone))
 						{
 							piece.Move(TargetZone.column, TargetZone.row);
-                            string move = piece.name + "," + TargetZone.column + TargetZone.row + "\n";
-                            SaveLoad.Update(move);
+//                            string move = piece.name + "," + TargetZone.column + TargetZone.row + "\n";
+                            // TODO SaveLoad.Update(move);
                             piece = null;
 							TargetZone = null;
                             SelectedZone = null;
@@ -112,25 +163,33 @@ public class GameController : MonoBehaviour
 			}
 			catch(System.NullReferenceException ex)
 			{
-				Debug.Log("Nope, nothing there: " + ex.Message);
+				Debug.Log("Nope, nothing there. " + ex.HelpLink);
 				nope.Play();
 			}
-
-            if ( SelectedZone != null )
-                redHalo.transform.position = (SelectedZone.transform.position + new Vector3(0, 3.5f, 0) );
-            //redHalo.transform.position = (SelectedPiece.transform.position + new Vector3(0, 3.5f, 0));
-            else
-                redHalo.transform.position = new Vector3(250, 250, 250);
-			if(TargetZone != null)
-				greenHalo.transform.position = (TargetZone.transform.position + new Vector3(0, 1.5f, 0));
-			else
-				greenHalo.transform.position = new Vector3 (250, 250, 250);
+			catch(System.Exception ex)
+			{
+				Debug.Log("Something went wrong between selecting a zone/piece and making a move. " + ex.HelpLink);
+			}
+			SetHalos ();
 		}
+	}
+
+	private void SetHalos()
+	{
+		if ( SelectedZone != null )
+			redHalo.transform.position = (SelectedZone.transform.position + new Vector3(0, 3.5f, 0) );
+		//redHalo.transform.position = (SelectedPiece.transform.position + new Vector3(0, 3.5f, 0));
+		else
+			redHalo.transform.position = new Vector3(250, 250, 250);
+		if(TargetZone != null)
+			greenHalo.transform.position = (TargetZone.transform.position + new Vector3(0, 1.5f, 0));
+		else
+			greenHalo.transform.position = new Vector3 (250, 250, 250);
 	}
 
 	public void GameOver()
 	{
-		gameOver.SetActive(true);
+		gameOverMenu.SetActive(true);
 	}
 
 	void SetDefaultPiece()
