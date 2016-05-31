@@ -316,6 +316,8 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler {
 			Destroy(targetPiece.gameObject);
 		}
 		this.transform.position = TargetZone.gameObject.transform.position;
+		this.currentCol = col;
+		this.currentRow = row;
 		//Destroy (this.gameObject);
 	}
 

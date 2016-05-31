@@ -4,10 +4,12 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
-{
+{ 
 	private bool player1Turn = true;
 	private bool pieceSelect = true;
 	private bool zoneSelect = false;
+	private GameObject whiteKing;
+	private GameObject blackKing;
 
 	public bool check;
 	public bool checkMate;
@@ -38,44 +40,30 @@ public class GameController : MonoBehaviour
 
 	private bool CheckForCheck()
 	{
-		GameObject whiteKing = new GameObject();
-		GameObject blackKing = new GameObject();
 		ArrayList whitePieces = new ArrayList ();
 		ArrayList blackPieces = new ArrayList ();
-		GameObject[] kings = GameObject.FindGameObjectsWithTag("King");
-		foreach (var king in kings)
-		{
-			if (king.GetComponent<PawnBehaviourScript> ().colour == "White")
-				whiteKing = king;
-			else
-				blackKing = king;
-		}
-		kings = null;
+
 		PawnBehaviourScript[] p = FindObjectsOfType<PawnBehaviourScript> ();
 		foreach (PawnBehaviourScript piece in p)
-		{
 			if (piece.tag != "King")
-			{				
 				if (piece.colour == "White")
-				{
 					whitePieces.Add (piece);
-				}
 				else
-				{
 					blackPieces.Add(piece);
-				}
-			}
-		}
 		p = null;
 		foreach (PawnBehaviourScript whitePiece in whitePieces)
-			if (whitePiece.CheckMove (FindContainingZone (blackKing)))
+			if (whitePiece.CheckMove (FindContainingZone (blackKing.gameObject)))
 			{
+				whitePieces = null;
+				blackPieces = null;
 				inCheck.SetActive (true);
 				return true;
 			}
 		foreach (PawnBehaviourScript blackPiece in blackPieces)
-			if (blackPiece.CheckMove (FindContainingZone (whiteKing)))
+			if (blackPiece.CheckMove (FindContainingZone (whiteKing.gameObject)))
 			{
+				whitePieces = null;
+				blackPieces = null;
 				inCheck.SetActive (true);
 				return true;
 			}
@@ -101,6 +89,22 @@ public class GameController : MonoBehaviour
 			camera2.GetComponent<AudioListener> ().enabled = true;
 			player1Turn = false;
 		}
+		if (blackKing != null && whiteKing != null)
+		{
+			CheckForCheck ();
+		}
+		else
+		{
+			GameObject[] kings = GameObject.FindGameObjectsWithTag("King");
+			foreach (var king in kings)
+			{
+				if (king.GetComponent<PawnBehaviourScript> ().colour == "White")
+					whiteKing = king;
+				else
+					blackKing = king;
+			}
+			kings = null;
+		}
 	}
 
     // Update is called once per frame
@@ -112,7 +116,6 @@ public class GameController : MonoBehaviour
 		
 		if(Input.anyKeyDown)
 		{
-			CheckForCheck();
 			// Select default piece (king), if none selected
 			if (SelectedPiece == null)
 				SetDefaultPiece ();
@@ -140,6 +143,7 @@ public class GameController : MonoBehaviour
 						if(piece.CheckMove(TargetZone))
 						{
 							piece.Move(TargetZone.column, TargetZone.row);
+							TargetZone.AcceptPiece(piece);
 //                            string move = piece.name + "," + TargetZone.column + TargetZone.row + "\n";
                             // TODO SaveLoad.Update(move);
                             piece = null;

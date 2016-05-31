@@ -24,6 +24,18 @@ public class ZoneScript : MonoBehaviour
 		setupStep = false;
 	}
 
+	public void AcceptPiece(PawnBehaviourScript piece)
+	{
+		containedPiece = piece;
+		containedPiece.SetCurrentPosition (column, row);
+		occupado = true;
+		if (setupStep && (row == 7 || row == 8))
+		{
+			containedPiece.colour = "Black";
+			setupStep = false;
+		}
+	}
+
 	void OnTriggerExit(Collider piece)
 	{
 		occupado = false;
