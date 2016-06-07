@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
 
 public class GameController : MonoBehaviour
 { 
@@ -23,7 +24,9 @@ public class GameController : MonoBehaviour
 	public AudioSource nope;
     public GameObject promotionMenu;
 	public GameObject gameOverMenu;
-	public GameObject inCheck;
+	public GameObject inCheckMenu;
+
+	public GameObject particle;
 
 	public void NewGame()
 	{
@@ -32,10 +35,25 @@ public class GameController : MonoBehaviour
 
 	void Start ()
 	{
+//		foreach (Touch touch in Input.touches)
+//		{
+//			Input.GetTouch
+//			if (touch.phase == TouchPhase.Began)
+//			{
+//				// Construct a ray from the current touch coordinates
+//				Ray ray = Camera.main.ScreenPointToRay (touch.position);
+//				if (Physics.Raycast (ray))
+//				{
+//					// Create a particle if hit
+//					Instantiate (particle, transform.position, transform.rotation);
+//				}
+//			}
+//		}
        // SaveLoad.CreateGame(System.DateTime.Now.Date.ToString());
 		Player (1);
 		gameOverMenu.SetActive (false);
-		inCheck.SetActive (false);
+		inCheckMenu.SetActive (false);
+		promotionMenu.SetActive (false);
     }
 
 	private bool CheckForCheck()
@@ -56,7 +74,7 @@ public class GameController : MonoBehaviour
 			{
 				whitePieces = null;
 				blackPieces = null;
-				inCheck.SetActive (true);
+				inCheckMenu.SetActive (true);
 				return true;
 			}
 		foreach (PawnBehaviourScript blackPiece in blackPieces)
@@ -64,15 +82,17 @@ public class GameController : MonoBehaviour
 			{
 				whitePieces = null;
 				blackPieces = null;
-				inCheck.SetActive (true);
+				inCheckMenu.SetActive (true);
 				return true;
 			}
-		inCheck.SetActive (false);
+		inCheckMenu.SetActive (false);
 		return false;
 	}
 
 	private void Player(int playerNo)
 	{
+		camera1.SetActive (true);
+		camera2.SetActive (true);
 		if (playerNo == 1)
 		{
 			camera1.GetComponent<Camera> ().enabled = true;
@@ -107,82 +127,89 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-    // Update is called once per frame
-    void Update () 
+	void GetPlayerMove()
 	{
 		// TODO Controller input
 		if (Mathf.Abs (Input.GetAxis ("Vertical")) == 1.0F || Mathf.Abs (Input.GetAxis ("Horizontal")) == 1.0F)
 			Debug.Log ("Sorry, controller input not yet supported.");
-		
-		if(Input.anyKeyDown)
-		{
+
+
 			// Select default piece (king), if none selected
 			if (SelectedPiece == null)
 				SetDefaultPiece ();
-				// Game is over if a king can't be selected
-				if (SelectedPiece == null)
-					GameOver ();
+			// Game is over if a king can't be selected
+			if (SelectedPiece == null)
+				GameOver ();
 
-			PawnBehaviourScript piece = SelectedPiece.GetComponent<PawnBehaviourScript>();
+			PawnBehaviourScript piece = SelectedPiece.GetComponent<PawnBehaviourScript> ();
 
 			try
 			{
 				if (pieceSelect)
 				{
-					FindNextPiece();
+					FindNextPiece ();
 				}
-				else if (zoneSelect)
-				{
-					if (TargetZone == null)
-						TargetZone = SelectZone(piece.currentCol, piece.currentRow);
-					FindNextZone(ref TargetZone);
-
-					//A piece and zone have been selected
-					if(!pieceSelect && !zoneSelect)
+				else
+				if (zoneSelect)
 					{
-						if(piece.CheckMove(TargetZone))
+						if (TargetZone == null)
+							TargetZone = SelectZone (piece.currentCol, piece.currentRow);
+						FindNextZone (ref TargetZone);
+
+						//A piece and zone have been selected
+						if (!pieceSelect && !zoneSelect)
 						{
-							piece.Move(TargetZone.column, TargetZone.row);
-							TargetZone.AcceptPiece(piece);
-//                            string move = piece.name + "," + TargetZone.column + TargetZone.row + "\n";
-                            // TODO SaveLoad.Update(move);
-                            piece = null;
-							TargetZone = null;
-                            SelectedZone = null;
-							SelectedPiece = null;
-							pieceSelect = true;
-							if (player1Turn)
-								Player(2);
+							if (piece.CheckMove (TargetZone))
+							{
+								piece.Move (TargetZone.column, TargetZone.row);
+								TargetZone.AcceptPiece (piece);
+								//                            string move = piece.name + "," + TargetZone.column + TargetZone.row + "\n";
+								// TODO SaveLoad.Update(move);
+								piece = null;
+								TargetZone = null;
+								SelectedZone = null;
+								SelectedPiece = null;
+								pieceSelect = true;
+								if (player1Turn)
+									Player (2);
+								else
+									Player (1);
+							}
 							else
-								Player(1);
-						}
-						else 
-						{
-							Debug.Log("Not a valid move");
-							TargetZone = SelectZone(piece.currentCol, piece.currentRow);
-							zoneSelect = true;
+							{
+								Debug.Log ("Not a valid move");
+								TargetZone = SelectZone (piece.currentCol, piece.currentRow);
+								zoneSelect = true;
+							}
 						}
 					}
-				}
 			}
-			catch(System.NullReferenceException ex)
+			catch (System.NullReferenceException ex)
 			{
-				Debug.Log("Nope, nothing there. " + ex.HelpLink);
-				nope.Play();
+				Debug.Log ("Nope, nothing there. " + ex.HelpLink);
+				nope.Play ();
 			}
-			catch(System.Exception ex)
+			catch (System.Exception ex)
 			{
-				Debug.Log("Something went wrong between selecting a zone/piece and making a move. " + ex.HelpLink);
+				Debug.Log ("Something went wrong between selecting a zone/piece and making a move. " + ex.HelpLink);
 			}
-			SetHalos ();
+
+	}
+
+    // Update is called once per frame
+    void Update () 
+	{
+		if (Input.anyKeyDown)
+		{
+			GetPlayerMove ();
+			UpdateHalos ();
 		}
 	}
 
-	private void SetHalos()
+	private void UpdateHalos()
 	{
 		if ( SelectedZone != null )
 			redHalo.transform.position = (SelectedZone.transform.position + new Vector3(0, 3.5f, 0) );
-		//redHalo.transform.position = (SelectedPiece.transform.position + new Vector3(0, 3.5f, 0));
 		else
 			redHalo.transform.position = new Vector3(250, 250, 250);
 		if(TargetZone != null)

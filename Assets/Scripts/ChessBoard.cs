@@ -20,7 +20,6 @@ public class ChessBoard : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
 		//MakeParticles ();
 		PopulateBoard ();
 	}
