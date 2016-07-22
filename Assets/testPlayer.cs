@@ -1,27 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class testPlayer : MonoBehaviour
 {
 
-	public Camera camera1;
-	public Camera camera2;
-	public GameObject up;
-	public Text upText;
+    public Camera camera1;
+    public Camera camera2;
+    public GameObject up;
+    public Text upText;
 
-	private Touch initialTouch = new Touch();
-	private bool beenSwiped = false;
-	private float distance;
+    private Touch initialTouch = new Touch();
+    private bool beenSwiped = false;
+    private float distance;
 
-	// Use this for initialization
-	void Start()
-	{
+    // Use this for initialization
+    void Start()
+    {
 	
-	}
+    }
 
-	void Update()
-	{
+    void Update()
+    {
 //		foreach (var t in Input.touches)
 //		{
 //			if (t.phase == TouchPhase.Began)
@@ -60,32 +61,32 @@ public class testPlayer : MonoBehaviour
 //				beenSwiped = false;
 //			}
 //		}
-		if (Input.touchCount > 0)
-		{
-			Touch touch = Input.GetTouch(0);
-			switch (Input.GetTouch(0).phase)
-			{
-				case TouchPhase.Began:
-					upText.text += "BEGAN";
-					break;
-				case TouchPhase.Moved:
-					if (!beenSwiped)
-					{
-						upText.text += "SWIPED" + touch.deltaPosition;
-						beenSwiped = true;
-					}
-					break;
-				case TouchPhase.Ended:
-					beenSwiped = false;
-					upText.text += "ENDED";
-					break;
-				default:
-					break;
-			}
-		}
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			upText.text += "SPACE";
-		}
-	}
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            switch (Input.GetTouch(0).phase)
+            {
+                case TouchPhase.Began:
+                    upText.text += "BEGAN";
+                    break;
+                case TouchPhase.Moved:
+                    if (!beenSwiped)
+                    {
+                        upText.text += "SWIPED" + touch.deltaPosition;
+                        beenSwiped = true;
+                    }
+                    break;
+                case TouchPhase.Ended:
+                    beenSwiped = false;
+                    upText.text += "ENDED";
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            upText.text += "SPACE";
+        }
+    }
 }
