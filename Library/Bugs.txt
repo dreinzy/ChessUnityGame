@@ -1,0 +1,3 @@
+**1, Promoted piece is always white
+2, Check isn't re-calculated when a promoted piece is created
+**Fixed

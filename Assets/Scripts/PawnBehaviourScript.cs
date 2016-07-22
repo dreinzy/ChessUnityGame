@@ -122,10 +122,15 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler
                     for (int i = 1; i < Mathf.Abs(distance); i++)
                     {
                         if (distance > 0)
-                        if (IsOccupied((char)(currentCol + (char)i), currentRow))
-                            return false;
-                        else if (IsOccupied((char)(currentCol - (char)i), currentRow))
-                            return false;
+                        {
+                            if (IsOccupied((char)(currentCol + (char)i), currentRow))
+                                return false;
+                        }
+                        else
+                        {
+                            if (IsOccupied((char)(currentCol - (char)i), currentRow))
+                                return false;
+                        }
                     }
                     return true;
                 }
@@ -137,10 +142,15 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler
                     for (int i = 1; i < Mathf.Abs(distance); i++)
                     {
                         if (distance > 0)
-                        if (IsOccupied(currentCol, currentRow + i))
-                            return false;
-                        else if (IsOccupied(currentCol, currentRow - i))
-                            return false;
+                        {
+                            if (IsOccupied(currentCol, currentRow + i))
+                                return false;
+                        }
+                        else
+                        {
+                            if (IsOccupied(currentCol, currentRow - i))
+                                return false;
+                        }
                     }
                     return true;
                 }
@@ -215,10 +225,15 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler
                     for (int i = 1; i < Mathf.Abs(distance); i++)
                     {
                         if (distance > 0)
-                        if (IsOccupied((char)(currentCol + (char)i), currentRow))
-                            return false;
-                        else if (IsOccupied((char)(currentCol - (char)i), currentRow))
-                            return false;                        
+                        {
+                            if (IsOccupied((char)(currentCol + (char)i), currentRow))
+                                return false;
+                        }
+                        else
+                        {
+                            if (IsOccupied((char)(currentCol - (char)i), currentRow))
+                                return false;
+                        }
                     }
                     return true;
                 }
@@ -230,10 +245,15 @@ public class PawnBehaviourScript : MonoBehaviour, IPointerClickHandler
                     for (int i = 1; i < Mathf.Abs(distance); i++)
                     {
                         if (distance > 0)
-                        if (IsOccupied((char)(currentCol + (char)i), currentRow))
-                            return false;
-                        else if (IsOccupied((char)(currentCol - (char)i), currentRow))
-                            return false;
+                        {
+                            if (IsOccupied((char)currentCol, currentRow + i))
+                                return false;
+                        }
+                        else
+                        {
+                            if (IsOccupied((char)(currentCol), currentRow - i))
+                                return false;
+                        }
                     }
                     return true;
                 }
