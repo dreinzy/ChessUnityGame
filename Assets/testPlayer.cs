@@ -11,7 +11,7 @@ public class testPlayer : MonoBehaviour
     public GameObject up;
     public Text upText;
 
-    private Touch initialTouch = new Touch();
+    //    private Touch initialTouch = new Touch();
     private bool beenSwiped = false;
     private float distance;
 

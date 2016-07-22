@@ -27,6 +27,7 @@ public class ZoneScript : MonoBehaviour
 
     public void AcceptPiece(PawnBehaviourScript piece)
     {
+        //containedPiece.enabled = false;
         containedPiece = piece;
         containedPiece.SetCurrentPosition(column, row);
         occupado = true;
@@ -40,6 +41,7 @@ public class ZoneScript : MonoBehaviour
     void OnTriggerExit(Collider piece)
     {
         occupado = false;
+        //Debug.Log(((char)column).ToString() + row.ToString() + " empty");
     }
 
     void OnMouseDown()

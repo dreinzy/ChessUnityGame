@@ -57,40 +57,17 @@ public class GameController : MonoBehaviour
         promotionMenu.SetActive(false);
     }
 
-    private bool CheckForCheck()
+    // Update is called once per frame
+    void Update()
     {
-        ArrayList whitePieces = new ArrayList();
-        ArrayList blackPieces = new ArrayList();
-
-        PawnBehaviourScript[] p = FindObjectsOfType<PawnBehaviourScript>();
-        foreach (PawnBehaviourScript piece in p)
-            if (piece.tag != "King")
-            if (piece.colour == "White")
-                whitePieces.Add(piece);
-            else
-                blackPieces.Add(piece);
-        p = null;
-        foreach (PawnBehaviourScript whitePiece in whitePieces)
-            if (whitePiece.CheckMove(FindContainingZone(blackKing.gameObject)))
-            {
-                whitePieces = null;
-                blackPieces = null;
-                inCheckMenu.SetActive(true);
-                return true;
-            }
-        foreach (PawnBehaviourScript blackPiece in blackPieces)
-            if (blackPiece.CheckMove(FindContainingZone(whiteKing.gameObject)))
-            {
-                whitePieces = null;
-                blackPieces = null;
-                inCheckMenu.SetActive(true);
-                return true;
-            }
-        inCheckMenu.SetActive(false);
-        return false;
+        if (Input.anyKeyDown)
+        {
+            GetPlayerMove();
+            UpdateHalos();
+        }
     }
 
-    private void Player(int playerNo)
+    private void Player(int playerNo) //Includes call to CheckForCheck each turn after first
     {
         camera1.SetActive(true);
         camera2.SetActive(true);
@@ -129,6 +106,39 @@ public class GameController : MonoBehaviour
         }
     }
 
+    private bool CheckForCheck()
+    {
+        ArrayList whitePieces = new ArrayList();
+        ArrayList blackPieces = new ArrayList();
+
+        PawnBehaviourScript[] p = FindObjectsOfType<PawnBehaviourScript>();
+        foreach (PawnBehaviourScript piece in p)
+            if (piece.tag != "King")
+            if (piece.colour == "White")
+                whitePieces.Add(piece);
+            else
+                blackPieces.Add(piece);
+        p = null;
+        foreach (PawnBehaviourScript whitePiece in whitePieces)
+            if (whitePiece.CheckMove(FindContainingZone(blackKing.gameObject)))
+            {
+                whitePieces = null;
+                blackPieces = null;
+                inCheckMenu.SetActive(true);
+                return true;
+            }
+        foreach (PawnBehaviourScript blackPiece in blackPieces)
+            if (blackPiece.CheckMove(FindContainingZone(whiteKing.gameObject)))
+            {
+                whitePieces = null;
+                blackPieces = null;
+                inCheckMenu.SetActive(true);
+                return true;
+            }
+        inCheckMenu.SetActive(false);
+        return false;
+    }
+
     void GetPlayerMove()
     {
         // TODO Controller input
@@ -153,6 +163,7 @@ public class GameController : MonoBehaviour
             }
             else if (zoneSelect)
             {
+                // Default zone is one contining selected piece
                 if (TargetZone == null)
                     TargetZone = SelectZone(piece.currentCol, piece.currentRow);
                 FindNextZone(ref TargetZone);
@@ -195,16 +206,6 @@ public class GameController : MonoBehaviour
             Debug.Log("Something went wrong between selecting a zone/piece and making a move. " + ex.HelpLink);
         }
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.anyKeyDown)
-        {
-            GetPlayerMove();
-            UpdateHalos();
-        }
     }
 
     private void UpdateHalos()
